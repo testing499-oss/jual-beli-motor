@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Penjualan Motor - CRUD</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+  form {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  input, select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #28a745;
+    color: white;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #218838;
+  }
+  table {
+    width: 90%;
+    margin: 30px auto;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    background-color: #28a745;
+    color: white;
+  }
+  .btn-edit {
+    background-color: #ffc107;
+    color: white;
+  }
+  .btn-edit:hover {
+    background-color: #e0a800;
+  }
+  .btn-delete {
+    background-color: #dc3545;
+    color: white;
+  }
+  .btn-delete:hover {
+    background-color: #c82333;
+  }
+</style>
+</head>
+<body>
+
+<h1>Penjualan Motor - CRUD</h1>
+
+<form id="motorForm">
+  <label for="motorName">Nama Motor:</label>
+  <input type="text" id="motorName" required>
+
+  <label for="motorBrand">Merek:</label>
+  <input type="text" id="motorBrand" required>
+
+  <label for="motorPrice">Harga:</label>
+  <input type="number" id="motorPrice" required>
+
+  <label for="motorStock">Stok:</label>
+  <input type="number" id="motorStock" required>
+
+  <button type="submit">Tambah Motor</button>
+</form>
+
+<table id="motorTable">
+  <thead>
+    <tr>
+      <th>Nama</th>
+      <th>Merek</th>
+      <th>Harga</th>
+      <th>Stok</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Data motor akan muncul di sini -->
+  </tbody>
+</table>
+
+<script>
+  let motors = [];
+  let editIndex = -1;
+
+  const form = document.getElementById('motorForm');
+  const tableBody = document.querySelector('#motorTable tbody');
+
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const name = document.getElementById('motorName').value;
+    const brand = document.getElementById('motorBrand').value;
+    const price = parseInt(document.getElementById('motorPrice').value);
+    const stock = parseInt(document.getElementById('motorStock').value);
+
+    if (editIndex >= 0) {
+      // Update data
+      motors[editIndex] = { name, brand, price, stock };
+      editIndex = -1;
+      form.querySelector('button').textContent = "Tambah Motor";
+    } else {
+      // Tambah data baru
+      motors.push({ name, brand, price, stock });
+    }
+
+    form.reset();
+    renderTable();
+  });
+
+  function renderTable() {
+    tableBody.innerHTML = '';
+    motors.forEach((motor, index) => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${motor.name}</td>
+        <td>${motor.brand}</td>
+        <td>Rp ${motor.price.toLocaleString()}</td>
+        <td>${motor.stock}</td>
+        <td>
+          <button class="btn-edit" onclick="editMotor(${index})">Edit</button>
+          <button class="btn-delete" onclick="deleteMotor(${index})">Hapus</button>
+        </td>
+      `;
+      tableBody.appendChild(row);
+    });
+  }
+
+  function editMotor(index) {
+    const motor = motors[index];
+    document.getElementById('motorName').value = motor.name;
+    document.getElementById('motorBrand').value = motor.brand;
+    document.getElementById('motorPrice').value = motor.price;
+    document.getElementById('motorStock').value = motor.stock;
+
+    editIndex = index;
+    form.querySelector('button').textContent = "Update Motor";
+  }
+
+  function deleteMotor(index) {
+    if (confirm("Apakah Anda yakin ingin menghapus motor ini?")) {
+      motors.splice(index, 1);
+      renderTable();
+    }
+  }
+</script>
+
+</body>
+</html>
